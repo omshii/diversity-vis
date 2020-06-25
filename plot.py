@@ -1,12 +1,13 @@
 import numpy as np
 from mayavi import mlab
+from time import sleep
 
-#TODO fix line widths
 
 #Getting colormap
 getmap = mlab.plot3d(0, 0, 0, colormap='Spectral')
 colormap = getmap.module_manager.scalar_lut_manager.lut.table.to_array()
 mlab.clf(getmap)
+
 
 #Plotting D
 x = np.array([0, 0])
@@ -63,7 +64,6 @@ mlab.plot3d(x, y, z, tube_radius=0.1, color=tuple(colormap[125][:3]/255))
 
 
 #Plotting S
-#TODO extend lines
 theta = np.arange(np.pi/2, np.pi*(3/2), 0.01)
 x = np.append([36], 2.5 * np.cos(theta)+33)
 y = np.append([5], 2.5 * np.sin(theta)+2.5)
@@ -112,6 +112,47 @@ y = np.array([0, 5])
 z = 40 * np.ones(x.shape)
 mlab.plot3d(x, y, z, tube_radius=0.1, color=tuple(colormap[224][:3]/255))
 
+#Animation function
+@mlab.animate()
+def anim():
+    fig = mlab.gcf()
+    fig.scene.movie_maker.record = True
+    mlab.figure(figure=fig, bgcolor=(0.005,0.005,0.005))
+    i = 0
+    while i < 60:
+        mlab.move(forward=-2)
+        fig.scene.render()
+        i = i+1
+        yield
+    i = 0
+    while i<5:
+        i = i+1
+        yield
+    i = 0
+    while i < 45:
+        mlab.view(azimuth=180+i*2, elevation=130-i)
+        fig.scene.render()
+        i = i+1
+        yield
+    i = 0
+    while i<5:
+        i = i+1
+        yield
+    i = 0
+    while i < 45:
+        mlab.view(azimuth=270+i*2, elevation=85-2*i)
+        mlab.move(forward=-0.1)
+        fig.scene.render()
+        i = i+1
+        yield
+    i = 0
+    while i<15:
+        i = i+1
+        yield
 
-#mlab.axes()
+
+mlab.view(azimuth=180, elevation=130)
+mlab.move(forward=120)
+animate = anim()
+
 mlab.show()
